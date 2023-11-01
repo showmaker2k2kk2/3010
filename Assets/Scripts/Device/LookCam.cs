@@ -17,9 +17,18 @@ public class LookCam : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        this.DelayCall(2, MoveCam);
+        MoveCam();
+    }
+    private IEnumerator delaycam(float time)
+    {
+        yield return new WaitForSeconds(time);
+    }    
+    void MoveCam()
+    {
         Vector3 camdir = player.transform.position + dirtoplayer;
         Vector3 smoth = Vector3.Lerp(transform.position, camdir, smoothcam);
         transform.position = camdir;
         transform.LookAt(player.position);
-    }
+    }    
 }

@@ -11,7 +11,7 @@ public class Emity : MonoBehaviour// nhận dame,tan cong, animation ,die,agent
 
 
 
-
+    protected characterAnimator animator=null;
     protected virtual void Start()
     {
         agent = GetComponent<NavMeshAgent>();

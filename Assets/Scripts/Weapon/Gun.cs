@@ -1,18 +1,21 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
     public Transform pointshoot;
-    public ParticleSystem bulet;
+    public GameObject aduu;
+ 
     Rigidbody rb;
+    Animator anim;
+
     public float speed;
 
 
     private void Awake()
     {
-       
+       anim= GetComponent<Animator>();
     }
 
 
@@ -27,12 +30,15 @@ public class Gun : MonoBehaviour
         if(Input.GetMouseButtonDown(0))
         {
             shoot();
+            anim.SetBool("shotsigle", true);
+
         }    
+        else { anim.SetBool("shotsigle", false); }
     }
     void shoot()
     {
-        ParticleSystem bullet = Instantiate(bulet, pointshoot.transform.position, transform.rotation);
-       Rigidbody rigidbodyBulet= bullet.GetComponent<Rigidbody>();
+        GameObject bullet = Instantiate(aduu, pointshoot.transform.position, transform.rotation);
+        Rigidbody rigidbodyBulet= bullet.GetComponent<Rigidbody>();
         rigidbodyBulet.AddForce(transform.forward * speed, ForceMode.Impulse);
         Destroy(bullet, 1);
     }    

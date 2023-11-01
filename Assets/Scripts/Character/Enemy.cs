@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Enemy : Emity,ITakeDame
 {
@@ -11,9 +12,13 @@ public class Enemy : Emity,ITakeDame
     public int Dame;
     public int currenthealth;
     public int maxHealth = 100;
+    public NavMeshAgent AgentBody => this.TryGetMonoComponent(ref agent);
 
-    bool onflollow;
 
+    bool animMove;
+
+    public Transform player;
+    public float speed;
 
     public Transform Target => GameManager.Intance.player.transform;
 
@@ -34,7 +39,7 @@ public class Enemy : Emity,ITakeDame
 
     private void Awake()
     {
-        anim = GetComponent<Animator>();
+        anim =GetComponentInChildren<Animator>();
         den_noi = OnArride;
     }
     protected override void Start()
@@ -48,29 +53,57 @@ public class Enemy : Emity,ITakeDame
 
     }
 
-    // Update is called once per frame
+    bool isMoving;
     void Update()
     {
-        if (arride)
-            return;
-        if(Target !=null && InAttacRange)
-        {
-           
-            agent.isStopped = true;
-            return;
-        }
-        if (!InAttacRange)
-        {
 
-            setDestination2(Target.transform.position);
-        }
-        //if (!agent.pathPending && agent.remainingDistance < 0.1f)
-        //{
+        //isMoving = agent.velocity.magnitude >0;
+        //if (isMoving) 
+        // {
+
+        // anim.SetBool("walk", true);
+        // }
+        //else
+        // {
+        //     anim.SetBool("walk", false);
+        // }
         //Movewaypoint();
+        //if (arride)
+        //    return;
+        //if (Target != null && InAttacRange)
+        //{
 
-            //}
+        //    agent.isStopped = true;
+        //    return;
+        //}
+        //if (!InAttacRange)
+        //{
 
-    }
+        //    setDestination2(Target.transform.position);
+        //}
+        //else
+        //{
+
+        //}    
+        if (!agent.pathPending && agent.remainingDistance < 0.1f)
+        {
+            Movewaypoint();
+            //if(animMove)
+            //{
+            //anim.SetBool("walk", true);
+            //}    
+
+
+            //    //animator.SetMovement(characterAnimator.Movementtype.Run);
+            //    //agent.SetDestination(destinationwaypoint[curentpoint].position);
+
+               }
+            //MoveTarget();
+
+            //anim.SetTrigger("dibo");
+          
+
+        }
     public void Takedame(int dame)
     {
         currenthealth -= dame;
@@ -81,44 +114,50 @@ public class Enemy : Emity,ITakeDame
     }
     void Movewaypoint()
     {
-        anim.SetBool("walk", true);
-        agent.SetDestination(destinationwaypoint[curentpoint].position);
 
-        curentpoint++;
-        if (curentpoint >= destinationwaypoint.Length)
-            curentpoint = 0;
+        setDestination2(destinationwaypoint[curentpoint].position);
+        anim.SetTrigger("dibo");
+
+
+        //curentpoint++;
+        //if (curentpoint >= destinationwaypoint.Length)
+        //    curentpoint = 0;
 
     }
 
     void MoveTarget()
     {
-        
 
-        //if (player != null)
-        //{
 
-        //    transform.position = Vector3.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
+        if (player != null)
+        {
 
-        //}
+            transform.position = Vector3.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
+
+           anim.SetBool("walk", true);
+        }
 
 
     }
     public void OnArride()
     {
         arride = true;
-        this.DelayCall(2, () =>
+        this.DelayCall(6, () =>
         {
             curentpoint++;
             if (curentpoint >= destinationwaypoint.Length)
                 curentpoint = 0;
             arride = false;
         });
+        anim.SetBool("walk", false);
     }
     public void setDestination2(Vector3 destination)
     {
         agent.isStopped = false;
         agent.SetDestination(destination);
-        if (Vector3.Distance(transform.position, destination) <= rangedesti)
-            den_noi?.Invoke();
+        if (Vector3.Distance(transform.position, destination) <= AgentBody.radius)
+        {
+            OnArride();
+        }   
     }
 }

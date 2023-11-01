@@ -11,7 +11,7 @@ public class Player : Emity
     public CanvasHealth canVasHealth;
     public int starthealth = 100;
     public int currentHealth;
-
+  
 
     Rigidbody rb;
     Animator anim;
@@ -20,6 +20,8 @@ public class Player : Emity
     {
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
+        //animator.Initialized();
+
     }
     protected override void Start()
     {
@@ -36,11 +38,13 @@ public class Player : Emity
         if (dir != Vector3.zero)
         {
             anim.SetBool("Run", true);
+            //animator.SetMovement(characterAnimator.Movementtype.Run);
 
             MoveInput(dir);
         }
         else
         {
+            //animator.SetMovement(characterAnimator.Movementtype.idle);
             anim.SetBool("Run", false);
         }    
         //if(Input.GetKeyDown(KeyCode.Space))
