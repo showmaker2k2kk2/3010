@@ -5,10 +5,10 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Enemy : Emity,ITakeDame
+public class Enemy : Emity, ITakeDame
 {
-    protected int attackrange;
 
+    protected int attackrange;
     public int Dame;
     public int currenthealth;
     public int maxHealth = 100;
@@ -21,7 +21,6 @@ public class Enemy : Emity,ITakeDame
     public float speed;
 
     public Transform Target => GameManager.Intance.player.transform;
-
     public Transform[] destinationwaypoint;
     private int curentpoint;
     Animator anim;
@@ -33,13 +32,14 @@ public class Enemy : Emity,ITakeDame
 
     private Vector3 diretionToTarget => Target.position - transform.position;
     private bool InAttacRange => diretionToTarget.sqrMagnitude <= attackrange * attackrange;
+    bool isdeath = false;
 
 
 
 
     private void Awake()
     {
-        anim =GetComponentInChildren<Animator>();
+        anim = GetComponentInChildren<Animator>();
         den_noi = OnArride;
     }
     protected override void Start()
@@ -56,108 +56,61 @@ public class Enemy : Emity,ITakeDame
     bool isMoving;
     void Update()
     {
+        if (isdeath)
+            return;
 
-        //isMoving = agent.velocity.magnitude >0;
-        //if (isMoving) 
-        // {
-
-        // anim.SetBool("walk", true);
-        // }
-        //else
-        // {
-        //     anim.SetBool("walk", false);
-        // }
-        //Movewaypoint();
-        //if (arride)
-        //    return;
-        //if (Target != null && InAttacRange)
-        //{
-
-        //    agent.isStopped = true;
-        //    return;
-        //}
-        //if (!InAttacRange)
-        //{
-
-        //    setDestination2(Target.transform.position);
-        //}
-        //else
-        //{
-
-        //}    
         if (!agent.pathPending && agent.remainingDistance < 0.1f)
         {
             Movewaypoint();
-            //if(animMove)
-            //{
-            //anim.SetBool("walk", true);
-            //}    
-
-
-            //    //animator.SetMovement(characterAnimator.Movementtype.Run);
-            //    //agent.SetDestination(destinationwaypoint[curentpoint].position);
-
-               }
-            //MoveTarget();
-
-            //anim.SetTrigger("dibo");
-          
 
         }
+    }
     public void Takedame(int dame)
     {
         currenthealth -= dame;
-        if(currenthealth<=0)
+        if (currenthealth <= 0)
         {
             Death();
-        }    
+        }
     }
     void Movewaypoint()
     {
-
+        isdeath = false;
         setDestination2(destinationwaypoint[curentpoint].position);
-        anim.SetTrigger("dibo");
-
-
-        //curentpoint++;
-        //if (curentpoint >= destinationwaypoint.Length)
-        //    curentpoint = 0;
 
     }
 
-    void MoveTarget()
-    {
 
-
-        if (player != null)
-        {
-
-            transform.position = Vector3.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
-
-           anim.SetBool("walk", true);
-        }
-
-
-    }
     public void OnArride()
     {
         arride = true;
-        this.DelayCall(6, () =>
+        anim.SetBool("walk", false);
+        this.DelayCall(2, () =>
         {
             curentpoint++;
             if (curentpoint >= destinationwaypoint.Length)
                 curentpoint = 0;
             arride = false;
         });
-        anim.SetBool("walk", false);
     }
+
     public void setDestination2(Vector3 destination)
     {
         agent.isStopped = false;
+        anim.SetBool("walk", true);
         agent.SetDestination(destination);
         if (Vector3.Distance(transform.position, destination) <= AgentBody.radius)
         {
             OnArride();
-        }   
+        }
+    }
+    protected override void Death()
+    {
+        isdeath = true;
+        anim.SetTrigger("Dead");
+        anim.SetBool("walk", false);
+        agent.isStopped = true;
+
+
     }
 }

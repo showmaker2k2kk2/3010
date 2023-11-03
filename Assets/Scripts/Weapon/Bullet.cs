@@ -12,10 +12,7 @@ public class Bullet : MonoBehaviour
     public float moveSpeed = 100f;
     public float destroyAffterTime = 5f;
 
-    [Header("Object Reference")]
-    public ParticleSystem projectileFX = null;
-    public ParticleSystem hitFX = null;
-    public ParticleSystem flashFx = null;
+   
 
     Rigidbody rb;
     private void Awake()
@@ -25,7 +22,7 @@ public class Bullet : MonoBehaviour
 
     void Start()
     {
-        projectileFX.Play();
+      
     }
 
     // Update is called once per frame  
@@ -33,28 +30,13 @@ public class Bullet : MonoBehaviour
     {
       
     }
-    public void Setspeed(float speed)
-    {
-
-        movespeed = speed;
-    } 
-    public void Active()
-    {
-        projectileFX.Play();
- 
-    }
-    public void active2()
-    { flashFx.Play(); }
+  
     private void OnTriggerEnter(Collider objectother)
     {
         ITakeDame dame= objectother.GetComponent<ITakeDame>();
         dame?.Takedame(Dame);
         Debug.Log(objectother.name);
-        hitFX.gameObject.SetActive(true);
-        hitFX.Play();
+        Destroy(gameObject);
     }
-public void Movebu()
-    {
-        rb.AddForce(transform.forward * moveSpeed);
-    }
+
 }

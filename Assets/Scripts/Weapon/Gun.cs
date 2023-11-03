@@ -5,8 +5,6 @@ using UnityEngine;
 public class Gun : MonoBehaviour
 {
     public Transform pointshoot;
-    
-    public Bullet bulet;
     public GameObject paticle;
  
     Rigidbody rb;
@@ -36,7 +34,7 @@ public class Gun : MonoBehaviour
             shoot();
           
             anim.SetBool("shotsigle", true);
-            bulet.flashFx.Play();
+          
 
         }
         else { anim.SetBool("shotsigle", false); }
@@ -45,16 +43,8 @@ public class Gun : MonoBehaviour
     void shoot()
     {
         GameObject obj = Instantiate(paticle, pointshoot.transform.position, transform.rotation);
-        Bullet bullet = obj.GetComponent<Bullet>();
-        bullet.Movebu();
-
-
-        //bu.Setspeed(100);
-        //Rigidob.AddForce(transform.forward * speed, ForceMode.Impulse);
-        
-
-
-        //bullet.Setspeed(100);
+        Rigidbody rbbu = obj.GetComponent<Rigidbody>();
+        rbbu.AddForce(transform.forward * speed);
         Destroy(obj,4f);
     }    
 }
